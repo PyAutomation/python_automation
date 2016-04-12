@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 def to_weird(text):
     words = []
     for word in text.split():
