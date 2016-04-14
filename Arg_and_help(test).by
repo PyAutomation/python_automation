@@ -5,6 +5,7 @@ args = parser.parse_args()
 
 parser.add_argument("SRCDIR", help="Directory for copy.")
 parser.add_argument("DSTDIR", help="Destination directory for copy")
+parser.add_argument("-s", "--shadow", help="Stealth mode")
 srcdir = args.SRCDIR
 dstdir = args.DSTDIR
 
