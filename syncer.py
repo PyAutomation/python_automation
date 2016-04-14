@@ -23,7 +23,7 @@ def path_check():
         if '@' in item:
             ippath = item.split('@')[1]
             host = ippath.split(':')[0]
-            user_port = ippath = item.split('@')[0]
+            user_port = item.split('@')[0]
             if ',' in user_port:
                 user = user_port.split(',')[0]
                 port = user_port.split(',')[1]
