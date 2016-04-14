@@ -1,10 +1,11 @@
 import argparse
 
 parser = argparse.ArgumentParser(description=__doc__)
+args = parser.parse_args()
 
 parser.add_argument("SRCDIR", help="Directory for copy.")
 parser.add_argument("DSTDIR", help="Destination directory for copy")
 srcdir = args.SRCDIR
 dstdir = args.DSTDIR
 
-args = parser.parse_args()
+
