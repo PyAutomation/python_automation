@@ -2,7 +2,6 @@
 import os
 import sys
 import paramiko
-import socket
 
 def argument_check():
     #will check if arguments are ok
