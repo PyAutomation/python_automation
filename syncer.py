@@ -9,41 +9,37 @@ def argument_check():
 def ip_check():
     for item in sys.argv:
         if '@' in item:
-            ippath = item.split('@')[1]
-            ip = ippath.split(':')[0]
-            command = os.system('ping -c 3'+' '+ip)
+            ip_path = item.split('@')[1]
+            host = ip_path.split(':')[0]
+            command = os.system('ping -c 3 '+host)
             if command == 0:
                 path_check()
             else:
-                print('no')
+                print('Remote host is down')
 
 def path_check():
     for item in sys.argv:
         if '@' in item:
-            ippath = item.split('@')[1]
-            host = ippath.split(':')[0]
-            user_port = item.split('@')[0]
-            if ',' in user_port:
-                user = user_port.split(',')[0]
-                port = user_port.split(',')[1]
-            elif '.' in user_port:
-                user = user_port.split('.')[0]
-                port = user_port.split('.')[1]
-            elif ':' in user_port:
-                user = user_port.split(':')[0]
-                port = user_port.split(':')[1]
-            else:
-                user = user_port
+            user_port, host_path = item.split('@')
+            host, path = host_path.split(':')
+            for separator in ',.:':
+                if separator in user_port:
+                    user, port = user_port.split(separator)
+                    break
+                else:
+                    user = user_port
+                    port = ''
         if '–pass' in item:
             secret = item.split('=')[1].strip("'")
-            #then paramiko magic
-            #then copy_file() will run if ok
+        else:
+            secret = ''
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.connect(hostname=host, username=user, password=secret, port=port)
+    stdin, stdout, stderr = client.exec_command('mkdir -p '+path)
+
+
 
 def copy_file():
-    if sys.argv:
-        arguments = ' '.join(sys.argv[1:])
-        os.system('rsync' + ' ' + arguments)
-    else:
-        print('Wrong arguments!')
-
-ip_check()
+    arguments = ' '.join(sys.argv[1:])
+    os.system('rsync '+arguments)
