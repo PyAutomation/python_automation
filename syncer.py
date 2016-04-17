@@ -3,15 +3,14 @@
 import os
 import sys
 import paramiko
+import commands
 
-# def argument_check():
-#     #will check if arguments are ok
 
 def ip_check():
     """
-    Parsing attributes for given hosts,
-    then checking if hosts are up
-    and then calling path_check function with working hosts.
+    Parses attributes for given hosts,
+    then checks if hosts are up
+    and then calls path_check function with working hosts.
     """
     hosts = []
     valid_hosts = []
@@ -26,21 +25,32 @@ def ip_check():
     if valid_hosts:
         path_check(valid_hosts)
 
+
 def path_check(hosts):
     """
-    Parsing username, port, host and path,
-    and then opening ssh session using paramiko
-    for each given host
+    Parses username, port, host and local and remote path,
+    finds all local and remote files, using find_local_files and find_remote_files functions,
+    and then opens ssh session using paramiko for each given host.
     """
+    local_files = []
+    remote_files = []
+    local_path = ''
     for item in sys.argv:
         if '–pass' in item:
             secret = item.split('=')[1].strip("'")
             break
         else:
             secret = ''
+    for item in sys.argv:
+        if '/' in item and '@' not in item:
+            local_path = item
+        if '.' in item and '/' not in item:
+            local_files.append(item)
+    if local_path:
+        local_files.append(find_local_files(local_path, 'f'))
     for i in hosts:
-        user_port, host_path = i.split('@')
-        host, path = host_path.split(':')
+        user_port, host_remote_path = i.split('@')
+        host, remote_path = host_remote_path.split(':')
         for separator in ',.:':
             if separator in user_port:
                 user, port = user_port.split(separator)
@@ -49,13 +59,17 @@ def path_check(hosts):
                 user = user_port
                 port = 0
         ssh = open_sshclient(host, user, port, secret)
-        ssh.exec_command('mkdir -p '+path)
+        if not remote_path:
+            remote_path = local_path
+        ssh.exec_command('mkdir -p '+remote_path)
+        remote_files.append(find_remote_files(remote_path, 'f', ssh))
         ssh.close()
     copy_file(hosts)
 
-def open_sshclient(host, user, port=0, secret=''):
+
+def open_sshclient(host, user, port, secret):
     """
-    Opening ssh session using paramiko.
+    Opens ssh session using paramiko.
     """
     ssh_client = paramiko.SSHClient()
     ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -73,7 +87,7 @@ def open_sshclient(host, user, port=0, secret=''):
 
 def copy_file(hosts):
     """
-    Making all needed operations according to given attributes with rsync.
+    Makes all needed operations according to given attributes with rsync.
     """
     arguments = []
     for item in sys.argv[1:]:
@@ -83,6 +97,25 @@ def copy_file(hosts):
         os.system('rsync '+' '.join(arguments)+' '+item)
 
 
+def find_remote_files(remote_path, type, ssh):
+    """
+    Finds all files or directories on remote machine, according to given attributes.
+    """
+    (ssh_in, ssh_out, ssh_err) = ssh.exec_command("find %s -name \"*\" -type %s" % (remote_path, type))
+    files = []
+    for file in ssh_out.readlines():
+        files.append(file.rstrip())
+    return files
 
+
+def find_local_files(local_path, type):
+    """
+    Finds all files or directories on local machine, according to given attributes.
+    """
+    local_out = commands.getoutput("find %s -name \"*\" -type %s" % (local_path, type))
+    files = []
+    for file in local_out.split("\n"):
+        files.append(file)
+    return files
 
 ip_check()
