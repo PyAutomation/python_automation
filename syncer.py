@@ -19,7 +19,7 @@ def ip_check():
             hosts.append(item)
     for i in hosts:
         host = i.split('@')[1].split(':')[0]
-        command = os.system('ping -c 1 '+host+' &> /dev/null')
+        command = os.system('ping -c 1 '+host+' > /dev/null')
         if command == 0:
             valid_hosts.append(i)
     if valid_hosts:
@@ -33,7 +33,6 @@ def path_check(hosts):
     and then opens ssh session using paramiko for each given host.
     """
     local_files = []
-    remote_files = []
     local_path = ''
     for item in sys.argv:
         if '–pass' in item:
@@ -50,7 +49,11 @@ def path_check(hosts):
         local_files.append(find_local_files(local_path, 'f'))
     for i in hosts:
         user_port, host_remote_path = i.split('@')
-        host, remote_path = host_remote_path.split(':')
+        if ':' in i:
+            host, remote_path = host_remote_path.split(':')
+        else:
+            host = host_remote_path
+            remote_path = ''
         for separator in ',.:':
             if separator in user_port:
                 user, port = user_port.split(separator)
@@ -62,7 +65,7 @@ def path_check(hosts):
         if not remote_path:
             remote_path = local_path
         ssh.exec_command('mkdir -p '+remote_path)
-        remote_files.append(find_remote_files(remote_path, 'f', ssh))
+        remote_files = find_remote_files(remote_path, 'f', ssh)
         ssh.close()
     copy_file(hosts)
 
@@ -119,3 +122,4 @@ def find_local_files(local_path, type):
     return files
 
 ip_check()
+
