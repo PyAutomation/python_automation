@@ -36,5 +36,4 @@ def copy_file(rsync_keys, file, host, remote_path):
     """
     Makes all needed operations according to given attributes with rsync.
     """
-    print('rsync ' + rsync_keys + ' ' + file + ' ' + host + ':' + remote_path)
     os.system('rsync '+rsync_keys+' '+file+' '+host+':'+remote_path)
