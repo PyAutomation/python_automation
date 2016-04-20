@@ -25,7 +25,7 @@ def host_user_port_parser(remote_machine):
             break
         else:
             user = user_port
-            port = 0
+            port = 0 # Port 0, really? Why don't make it SSH default, 22? And what if my port will be a string?
     return host, user, port
 
 def single_files(attributes):
@@ -52,7 +52,7 @@ def remote_path_parser(attributes):
     Returns remote path from arguments.
     """
     for item in attributes:
-        if ':/' in item:
+        if ':/' in item: # What if I mistype path, like :\ ?
             remote_path = item.split(':')[1]
             break
         else:
@@ -77,6 +77,6 @@ def rsync_keys_parser(attributes):
     """
     rsync_keys = []
     for item in attributes:
-        if item.startswith('-'):
+        if item.startswith('-'): # What if I will set all keys in a row, like -Pxasdafdg, not -P -a ...?
             rsync_keys.append(item)
     return rsync_keys
