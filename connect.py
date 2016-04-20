@@ -23,7 +23,7 @@ def open_sshclient(host, user, port, secret):
     ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh_client.load_system_host_keys()
     if secret and port:
-        ssh_client.connect(hostname=host, username=user, password=secret, port=port)
+        ssh_client.connect(hostname=host, username=user, password=secret, port=port) # If no port can we force to default port?
     elif secret and port==0:
         ssh_client.connect(hostname=host, username=user, password=secret)
     elif not secret and port:
@@ -36,4 +36,4 @@ def copy_file(rsync_keys, file, host, remote_path):
     """
     Makes all needed operations according to given attributes with rsync.
     """
-    os.system('rsync '+rsync_keys+' '+file+' '+host+':'+remote_path)
+    os.system('rsync '+rsync_keys+' '+file+' '+host+':'+remote_path) # How would you check stdout, stderr and exitcode?
