@@ -5,6 +5,10 @@ import finder
 import connect
 import sys
 
+# Can we add __name__ check? The script will fire when I'll try to import it :(
+# Can we also add check for OS type? No rsync exists on Windows, I want to have that message.
+
+# Use moduled structure, I'll explain it during the classes
 hosts = parser.machines_parser(sys.argv)
 valid_hosts = connect.ip_check(hosts)
 local_path = parser.local_path_parser(sys.argv)
