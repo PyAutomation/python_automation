@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import commands
 
-def find_remote_files(remote_path, type, ssh):
+def find_remote_files(remote_path, type, ssh): # Can it be a function like remote_command_runner?
     """
     Finds all files or directories on remote machine, according to given attributes.
     """
@@ -13,7 +13,7 @@ def find_remote_files(remote_path, type, ssh):
     return files
 
 
-def find_local_files(local_path, type):
+def find_local_files(local_path, type): # Can it be a function like local_command_runner, a kind of utility package, with different args?
     """
     Finds all files or directories on local machine, according to given attributes.
     """
@@ -23,14 +23,14 @@ def find_local_files(local_path, type):
         files.append(file)
     return files
 
-def find_local_file(local_path, file):
+def find_local_file(local_path, file): # Can it be a function like local_command_runner, a kind of utility package, with different args?
     """
     Finds all single files on local machine, according to given attributes.
     """
     file = commands.getoutput("find %s -name \"%s\" -type f" % (local_path, file))
     return file
 
-def get_remote_md5(file, ssh):
+def get_remote_md5(file, ssh): # Can it be a function like remote_command_runner, a kind of utility package, with different args?
     """
     Returns hash from remote files.
     """
@@ -40,14 +40,14 @@ def get_remote_md5(file, ssh):
         md5sum = line.split(" ")[0]
     return md5sum
 
-def get_local_md5(file):
+def get_local_md5(file): # Can it be a function like local_command_runner, a kind of utility package, with different args?
     """
     Returns hash from local files.
     """
     local_out = commands.getoutput("md5sum %s" % file)
     return local_out.split(" ")[0]
 
-def compare_files(local_files, remote_files, ssh):
+def compare_files(local_files, remote_files, ssh): # BTW, we can subtract tuples: (1, 3) - (1, 4 6) -> (3)
     """
     Compares hashes and returns list of files, needed to be copied.
     """
