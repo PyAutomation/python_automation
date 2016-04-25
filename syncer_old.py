@@ -98,6 +98,7 @@ def copy_file(hosts):
         if '@' not in item and '–pass' not in item:
             arguments.append(item)
     for item in hosts:
+        # plz use .format for test strings concatenation
         os.system('rsync '+' '.join(arguments)+' '+item)
 
 
